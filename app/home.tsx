@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+//hello
 interface ProductItem {
   id: number;
   name: string;
