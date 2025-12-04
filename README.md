@@ -39,6 +39,49 @@ npm run reset-project
 
 This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
+## 🧪 Testing Guide
+
+
+This project uses **Jest** and **React Native Testing Library** to test both UI components and application logic.
+
+
+### 1. Run all tests
+
+
+```bash
+npm run test
+```
+
+
+This command will:
+
+
+- Execute all test files inside the `__tests__/` directory
+- Display pass/fail results in the terminal
+- Automatically watch file changes in development mode
+
+
+### 2. Run tests with coverage report
+
+
+```bash
+npm run test:coverage
+```
+
+
+This command will:
+
+
+- Generate a **coverage report**
+- Export results to:
+
+
+```
+coverage/
+└── index.html
+```
+
+
 ## Learn more
 
 To learn more about developing your project with Expo, look at the following resources:
