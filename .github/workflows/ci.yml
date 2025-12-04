@@ -10,7 +10,7 @@ on:
 
 jobs:
   test-and-analyze:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
 
     steps:
