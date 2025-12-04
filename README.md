@@ -1,3 +1,7 @@
+[![React Native CI - Test, Report & SonarCloud](https://github.com/BHAK-mobileapp/Frontend/actions/workflows/ci.yml/badge.svg)](https://github.com/BHAK-mobileapp/Frontend/actions/workflows/ci.yml)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=BHAK-mobileapp_Frontend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=BHAK-mobileapp_Frontend)
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
