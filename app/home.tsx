@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import * as Sentry from '@sentry/react-native';
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -109,10 +110,32 @@ export default function Home() {
           <Image source={require('../assets/images/home (1).png')} style={[styles.navIcon, styles.activeNavIcon]} />
           <Text style={[styles.navText, styles.activeNavText]}>Trang chủ</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image source={require('../assets/images/plus.png')} style={styles.navIcon} />
-          <Text style={styles.navText}>Lên kệ</Text>
-        </TouchableOpacity>
+        <TouchableOpacity
+  style={styles.navItem}
+  onPress={() => {
+    console.log("=== TEST SENTRY: Crash tại nút Lên kệ ===");
+
+    // Gửi message lên Sentry
+    Sentry.captureMessage(
+      "Test Sentry từ nút Lên kệ – Home screen"
+    );
+
+    // Gửi exception
+    Sentry.captureException(
+      new Error(
+        "SENTRY ERROR: Crash test – nút Lên kệ (home.tsx)"
+      )
+    );
+
+    // Crash thật để test
+    throw new Error(
+      "CRASHED: Test crash từ nút Lên kệ – Home screen"
+    );
+  }}
+>
+  <Image source={require('../assets/images/plus.png')} style={styles.navIcon} />
+  <Text style={styles.navText}>Lên kệ</Text>
+</TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
           <Image source={require('../assets/images/chat (1).png')} style={styles.navIcon} />
           <Text style={styles.navText}>Chat</Text>
