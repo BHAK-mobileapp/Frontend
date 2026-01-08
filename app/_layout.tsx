@@ -1,5 +1,5 @@
-import { Stack, useNavigationContainerRef } from 'expo-router';
 import * as Sentry from '@sentry/react-native';
+import { Stack, useNavigationContainerRef } from 'expo-router';
 import { useEffect } from 'react';
 
 const navigationIntegration = Sentry.reactNavigationIntegration();
@@ -16,11 +16,13 @@ Sentry.init({
   enableAutoSessionTracking: true,
   sessionTrackingIntervalMillis: 5000,
 
+  profilesSampleRate: 1.0, // Capture 100% profiles khi test
   // User Interaction Tracking
+
   enableUserInteractionTracing: true,
 
   // Privacy
-  sendDefaultPii: false, // Không gửi thông tin cá nhân mặc định
+  sendDefaultPii: true, // Không gửi thông tin cá nhân mặc định
   maxBreadcrumbs: 150,
 
   // Enable native crash handling
@@ -33,8 +35,10 @@ Sentry.init({
 
   // Configure Session Replay
   replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1,
-  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+  replaysOnErrorSampleRate: 1.0,
+  
+  integrations: [
+    Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()], // Sentry.hermesProfilingIntegration({platformProfilers: false,})
 
   // uncomment the line below to enable Spotlight (https://spotlightjs.com)
   // spotlight: _DEV_,
