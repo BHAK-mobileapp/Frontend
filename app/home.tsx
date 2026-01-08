@@ -1,9 +1,13 @@
 import ChatIcon from '@/assets/svg/ChatIcon';
+import HeartIcon from '@/assets/svg/HeartIcon';
+import HeartedIcon from '@/assets/svg/HeartedIcon';
 import HomeIcon from '@/assets/svg/HomeIcon';
 import PlusIcon from '@/assets/svg/PlusIcon';
 import UserIcon from '@/assets/svg/UserIcon';
+import WalkIcon from '@/assets/svg/WalkIcon';
 import { Stack, useRouter } from 'expo-router';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import { Image, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 //hello
 interface ProductItem {
@@ -14,6 +18,8 @@ interface ProductItem {
   distance: string;
   image: any;
   note?: string;
+  price?: string;
+  address?: string;
 }
 
 const products: ProductItem[] = [
@@ -24,7 +30,9 @@ const products: ProductItem[] = [
     usage: '99%',
     distance: 'Cách bạn 500m',
     image: require('../assets/images/sunhouse.png'),
-    note: 'Đơn nhà nên cần cho'
+    note: 'Dọn nhà nên cần cho',
+    price: '120.000đ',
+    address: 'Quận 1, TP.HCM'
   },
   {
     id: 2,
@@ -33,7 +41,9 @@ const products: ProductItem[] = [
     usage: '97%',
     distance: 'Cách bạn 1.2km',
     image: require('../assets/images/miband.png'),
-    note: 'Lên đời nên pass lại'
+    note: 'Lên đời nên pass lại',
+    price: '700.000đ',
+    address: 'Quận 3, TP.HCM'
   },
   {
     id: 3,
@@ -42,12 +52,65 @@ const products: ProductItem[] = [
     usage: '99%',
     distance: 'Cách bạn 1.5km',
     image: require('../assets/images/dacnhantam.png'),
-    note: 'Đọc không hay nên pass'
+    note: 'Đọc không hay nên pass',
+    price: '50.000đ',
+    address: 'Quận 5, TP.HCM'
   },
 ];
 
 export default function Home() {
   const router = useRouter();
+  const [liked, setLiked] = useState<Record<number, boolean>>({});
+  const [productList, setProductList] = useState<ProductItem[]>(products);
+  const [priceSortOrder, setPriceSortOrder] = useState<'none' | 'asc' | 'desc'>('none');
+  const [distanceSortOrder, setDistanceSortOrder] = useState<'none' | 'asc' | 'desc'>('none');
+  const [activeFilter, setActiveFilter] = useState<'none' | 'distance' | 'price'>('none');
+
+  const parsePrice = (p?: string) => {
+    if (!p) return 0;
+    const digits = String(p).replace(/\./g, '').replace(/[^0-9]/g, '');
+    return Number(digits) || 0;
+  };
+
+  const parseDistance = (d?: string) => {
+    if (!d) return Number.POSITIVE_INFINITY;
+    // expect strings like 'Cách bạn 500m' or 'Cách bạn 1.2km'
+    const m = String(d).match(/([0-9]+(?:[.,][0-9]+)?)\s*(km|m)/i);
+    if (!m) return Number.POSITIVE_INFINITY;
+    const num = parseFloat(m[1].replace(',', '.'));
+    const unit = m[2].toLowerCase();
+    return unit === 'km' ? Math.round(num * 1000) : Math.round(num);
+  };
+
+  const togglePriceSort = () => {
+    const nextOrder = priceSortOrder === 'asc' ? 'desc' : 'asc';
+    const sorted = [...productList].sort((a, b) => {
+      const pa = parsePrice(a.price);
+      const pb = parsePrice(b.price);
+      return nextOrder === 'asc' ? pa - pb : pb - pa;
+    });
+    setProductList(sorted);
+    setPriceSortOrder(nextOrder);
+    setDistanceSortOrder('none');
+    setActiveFilter('price');
+  };
+
+  const toggleDistanceSort = () => {
+    const nextOrder = distanceSortOrder === 'asc' ? 'desc' : 'asc';
+    const sorted = [...productList].sort((a, b) => {
+      const da = parseDistance(a.distance);
+      const db = parseDistance(b.distance);
+      return nextOrder === 'asc' ? da - db : db - da;
+    });
+    setProductList(sorted);
+    setDistanceSortOrder(nextOrder);
+    setPriceSortOrder('none');
+    setActiveFilter('distance');
+  };
+
+  const toggleLike = (id: number) => {
+    setLiked((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
   return (
     <View style={styles.container}>
       <Stack.Screen 
@@ -60,35 +123,52 @@ export default function Home() {
       {/* Main title */}
       <Text style={styles.mainTitle}>Mới nhất gần bạn</Text>
       <View style={styles.distanceIndicator}>
-        <Image 
-          source={require('../assets/images/walk.png')}
+        <WalkIcon
           style={styles.walkIcon}
         />
         <Text style={styles.distanceText}>Cách bạn 1km</Text>
       </View>
 
-      {/* Main Image */}
-      <Image
-        source={require('../assets/images/gundam.png')}
-        style={styles.mainImage}
-        resizeMode="cover"
-      />
+      {/* Main Image with overlay */}
+      <View style={styles.mainImageWrapper}>
+        <Image
+          source={require('../assets/images/iphone.png')}
+          style={styles.mainImage}
+          resizeMode="contain"
+        />
+        <View style={styles.imageOverlay}>
+          <Text style={styles.overlayTitle}>iPhone 17 Pro Max 1TB Likenew</Text>
+          <Text style={styles.overlaySubtitle}>27.000.000đ - Tân Bình</Text>
+        </View>
+      </View>
       <Text style={styles.sectionTitle}>Sản phẩm mới nhất</Text>
 
       {/* Filter Options */}
       <View style={styles.filterContainer}>
-        <TouchableOpacity style={[styles.filterButton, styles.activeFilter]}>
-          <Text style={styles.filterButtonText}>Khoảng cách</Text>
+        <TouchableOpacity
+          style={[styles.filterButton, activeFilter === 'distance' ? styles.activeFilter : null]}
+          onPress={toggleDistanceSort}
+        >
+          <Text style={styles.filterButtonText}>Khoảng cách{distanceSortOrder === 'asc' ? ' ↑' : distanceSortOrder === 'desc' ? ' ↓' : ''}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.filterButton}>
-          <Text style={styles.filterButtonText}>Giá tiền</Text>
+        <TouchableOpacity
+          style={[styles.filterButton, activeFilter === 'price' ? styles.activeFilter : null]}
+          onPress={togglePriceSort}
+        >
+          <Text style={styles.filterButtonText}>
+            Giá tiền{priceSortOrder === 'asc' ? ' ↑' : priceSortOrder === 'desc' ? ' ↓' : ''}
+          </Text>
         </TouchableOpacity>
       </View>
 
       {/* Product List */}
       <ScrollView style={styles.productList}>
-        {products.map((product) => (
-          <View key={product.id} style={styles.productCard}>
+        {productList.map((product) => (
+          <TouchableOpacity
+            key={product.id}
+            style={styles.productCard}
+            onPress={() => router.push(`/product/${product.id}`)}
+          >
             <Image source={product.image} style={styles.productImage} />
             <View style={styles.productInfo}>
               <Text style={styles.productName}>{product.name}</Text>
@@ -96,14 +176,20 @@ export default function Home() {
                 {product.type} • {product.usage} • {product.distance}
               </Text>
               <Text style={styles.productNote}>{product.note}</Text>
+              {product.price ? <Text style={[styles.productNote, {fontWeight: '700'}]}>{product.price}</Text> : null}
+              {product.address ? <Text style={styles.productDetails}>{product.address}</Text> : null}
             </View>
-            <TouchableOpacity style={styles.favoriteButton}>
-              <Image 
-                source={require('../assets/images/heart.png')}
-                style={styles.heartIcon}
-              />
+            <TouchableOpacity
+              style={styles.favoriteButton}
+              onPress={() => toggleLike(product.id)}
+            >
+              {liked[product.id] ? (
+                <HeartedIcon style={styles.heartIcon} />
+              ) : (
+                <HeartIcon style={styles.heartIcon} />
+              )}
             </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
 
@@ -120,11 +206,11 @@ export default function Home() {
           <PlusIcon style={styles.navIcon} />
           <Text style={styles.navText}>Lên kệ</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/chat')}>
           <ChatIcon style={styles.navIcon} />
           <Text style={styles.navText}>Chat</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/userinfo')}>
           <UserIcon style={styles.navIcon} />
           <Text style={styles.navText}>Tài khoản</Text>
         </TouchableOpacity>
@@ -137,7 +223,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 40,
+    paddingTop: Platform.OS === 'ios' ? 64 : 60,
   },
   header: {
     flexDirection: 'row',
@@ -157,7 +243,7 @@ const styles = StyleSheet.create({
   mainTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#98D8AA',
+    color: '#92E3A9',
     paddingHorizontal: 20,
     marginBottom: 10,
   },
@@ -178,8 +264,39 @@ const styles = StyleSheet.create({
   },
   mainImage: {
     width: '100%',
+    height: 170,
+    alignSelf: 'center',
+  },
+  mainImageWrapper: {
+    width: '100%',
     height: 200,
     marginBottom: 20,
+    position: 'relative',
+    overflow: 'hidden',
+    borderRadius: 12,
+  },
+  imageOverlay: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    bottom: 12,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  overlayTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  overlaySubtitle: {
+    color: '#fff',
+    fontSize: 13,
+    marginTop: 4,
+    textAlign: 'center',
   },
   sectionTitle: {
     fontSize: 20,
@@ -200,7 +317,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
   },
   activeFilter: {
-    backgroundColor: '#98D8AA',
+    backgroundColor: '#92E3A9',
   },
   filterButtonText: {
     color: '#000',
@@ -257,7 +374,10 @@ const styles = StyleSheet.create({
   navbar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: 15,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 12,
+    height: Platform.OS === 'ios' ? 78 : 85,
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#eee',
@@ -271,13 +391,14 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   activeNavIcon: {
-    tintColor: '#98D8AA',
+    tintColor: '#92E3A9',
   },
   navText: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#666',
+    fontFamily:'Bold',
   },
   activeNavText: {
-    color: '#98D8AA',
+    color: '#92E3A9',
   },
 });

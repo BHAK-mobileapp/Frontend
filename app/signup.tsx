@@ -1,44 +1,71 @@
 import { Stack, router } from "expo-router";
 import { useState } from "react";
-import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
-export default function Login() {
+export default function Signup() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
 
   const submit = () => {
-    if (!email || !password) {
-      Alert.alert("Missing fields", "Please enter email and password.");
+    if (!name || !email || !password || !confirmPassword) {
+      Alert.alert("Missing fields", "Please fill in all fields.");
       return;
     }
-    
-    // Here you would typically validate credentials with your backend
-    // For now, we'll just navigate to the home page
-    router.push("/home");
+    if (password !== confirmPassword) {
+      Alert.alert("Password mismatch", "Passwords do not match.");
+      return;
+    }
+
+    // Normally call backend to create account. For now, navigate to userinfo and pass data.
+    const qp = `?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&address=${encodeURIComponent(address)}`;
+    router.push(`/userinfo${qp}`);
   };
 
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
-      
+
       <View style={styles.header}>
-        <Text style={styles.headerText}>SIGN IN</Text>
+        <Text style={styles.headerText}>SIGN UP</Text>
         <View style={styles.headerLinks}>
-          <TouchableOpacity>
-            <Text style={styles.forgotText}>FORGOT</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/signup')}>
-            <Text style={styles.signUpText}>SIGN UP</Text>
+          <TouchableOpacity onPress={() => router.push('/login')}>
+            <Text style={styles.forgotText}>SIGN IN</Text>
           </TouchableOpacity>
         </View>
       </View>
 
       <TextInput
+        value={name}
+        onChangeText={setName}
+        placeholder="FULL NAME"
+        style={styles.input}
+        placeholderTextColor="#666"
+      />
+      <TextInput
         value={email}
         onChangeText={setEmail}
-        placeholder="GMAIL OR PHONE NUMBER"
+        placeholder="EMAIL"
         keyboardType="email-address"
         autoCapitalize="none"
+        style={styles.input}
+        placeholderTextColor="#666"
+      />
+      <TextInput
+        value={phone}
+        onChangeText={setPhone}
+        placeholder="PHONE NUMBER"
+        keyboardType="phone-pad"
+        style={styles.input}
+        placeholderTextColor="#666"
+      />
+      <TextInput
+        value={address}
+        onChangeText={setAddress}
+        placeholder="ADDRESS"
         style={styles.input}
         placeholderTextColor="#666"
       />
@@ -50,29 +77,18 @@ export default function Login() {
         style={styles.input}
         placeholderTextColor="#666"
       />
-      
+      <TextInput
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        placeholder="CONFIRM PASSWORD"
+        secureTextEntry
+        style={styles.input}
+        placeholderTextColor="#666"
+      />
+
       <TouchableOpacity style={styles.signInButton} onPress={submit}>
-        <Text style={styles.signInButtonText}>SIGN IN</Text>
+        <Text style={styles.signInButtonText}>CREATE ACCOUNT</Text>
       </TouchableOpacity>
-
-      <View style={styles.orContainer}>
-        <Text style={styles.orText}>OR SIGN IN WITH</Text>
-      </View>
-
-      <View style={styles.socialButtons}>
-        <TouchableOpacity style={styles.socialButton}>
-          <Image 
-            source={require('../assets/images/facebook.png')} 
-            style={styles.socialIcon} 
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialButton}>
-          <Image 
-            source={require('../assets/images/google.png')} 
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -128,32 +144,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
-  },
-  orContainer: {
-    marginVertical: 30,
-    alignItems: 'center',
-  },
-  orText: {
-    color: '#666',
-    fontSize: 16,
-  },
-  socialButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 20,
-  },
-  socialButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#f8f8f8',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#eee',
-  },
-  socialIcon: {
-    width: 25,
-    height: 25,
   },
 });
