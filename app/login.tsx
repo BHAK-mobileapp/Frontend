@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack, router } from "expo-router";
 import { useState } from "react";
 import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -6,15 +7,28 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const submit = () => {
+  const submit = async () => {
     if (!email || !password) {
       Alert.alert("Missing fields", "Please enter email and password.");
       return;
     }
-    
-    // Here you would typically validate credentials with your backend
-    // For now, we'll just navigate to the home page
-    router.push("/home");
+
+    try {
+      const stored = await AsyncStorage.getItem('user');
+      if (!stored) {
+        Alert.alert('No account', 'Không tìm thấy tài khoản. Vui lòng đăng ký.');
+        return;
+      }
+      const user = JSON.parse(stored);
+      if (user.email === email && user.password === password) {
+        router.push('/home');
+      } else {
+        Alert.alert('Invalid', 'Email hoặc mật khẩu không đúng.');
+      }
+    } catch (e) {
+      console.error('Login error', e);
+      Alert.alert('Error', 'Không thể xác thực.');
+    }
   };
 
   return (
@@ -36,7 +50,7 @@ export default function Login() {
       <TextInput
         value={email}
         onChangeText={setEmail}
-        placeholder="GMAIL OR PHONE NUMBER"
+        placeholder="Email"
         keyboardType="email-address"
         autoCapitalize="none"
         style={styles.input}
@@ -45,7 +59,7 @@ export default function Login() {
       <TextInput
         value={password}
         onChangeText={setPassword}
-        placeholder="PASSWORD"
+        placeholder="Password"
         secureTextEntry
         style={styles.input}
         placeholderTextColor="#666"

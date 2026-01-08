@@ -15,6 +15,17 @@ interface ProductItem {
 
 const products: ProductItem[] = [
   {
+    id: 0,
+    name: 'iPhone 17 Pro Max 1TB Likenew',
+    type: 'Điện tử',
+    usage: '99% ',
+    distance: 'Cách bạn 1km',
+    image: require('../../assets/images/iphone.png'),
+    note: 'Sản phẩm trên cover',
+    price: '27.000.000đ',
+    address: 'Tân Bình'
+  },
+  {
     id: 1,
     name: 'Chảo Sunhouse',
     type: 'Gia dụng',

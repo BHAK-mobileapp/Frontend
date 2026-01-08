@@ -4,14 +4,16 @@ import * as ImagePicker from 'expo-image-picker';
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
-    Alert,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+	Alert,
+	Image,
+	Platform,
+	ScrollView,
+	StatusBar,
+	StyleSheet,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
 } from 'react-native';
 
 export default function PostProduct() {
@@ -119,11 +121,13 @@ export default function PostProduct() {
 
 	const categories = ['Điện tử', 'Gia dụng', 'Thời trang', 'Sách', 'Đồ chơi', 'Khác'];
 
+	const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 24) : 44;
+	const HEADER_HEIGHT = STATUS_BAR_HEIGHT;
+
 	return (
-		<View style={styles.container}>
-			<Stack.Screen options={{ headerShown: false }} />
+		<View style={[styles.container, { paddingTop: HEADER_HEIGHT }]}>
+			<Stack.Screen options={{ headerShown: true, title: 'Đăng sản phẩm mới' }} />
 			<ScrollView contentContainerStyle={styles.content}>
-				<Text style={styles.title}>Đăng sản phẩm mới</Text>
 
 				<Text style={styles.label}>Ảnh sản phẩm</Text>
 				<View style={styles.imageRow}>
@@ -187,7 +191,7 @@ export default function PostProduct() {
 }
 
 const styles = StyleSheet.create({
-	container: { flex: 1, backgroundColor: '#fff', paddingTop: 40 },
+	container: { flex: 1, backgroundColor: '#F5F5F5' },
 	content: { padding: 20, paddingBottom: 40 },
 	title: { fontSize: 22, fontWeight: '700', color: '#92E3A9', marginBottom: 16 },
 	label: { fontSize: 14, color: '#333', marginBottom: 8, marginTop: 12 },

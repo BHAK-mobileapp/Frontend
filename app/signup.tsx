@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack, router } from "expo-router";
 import { useState } from "react";
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -9,20 +10,30 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [dob, setDob] = useState("");
 
-  const submit = () => {
+  const submit = async () => {
     if (!name || !email || !password || !confirmPassword) {
       Alert.alert("Missing fields", "Please fill in all fields.");
+      return;
+    }
+    if (dob && !/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
+      Alert.alert("Invalid date", "Date of birth must be YYYY-MM-DD.");
       return;
     }
     if (password !== confirmPassword) {
       Alert.alert("Password mismatch", "Passwords do not match.");
       return;
     }
-
-    // Normally call backend to create account. For now, navigate to userinfo and pass data.
-    const qp = `?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&address=${encodeURIComponent(address)}`;
-    router.push(`/userinfo${qp}`);
+    // Save user locally (simulate account creation)
+    const user = { name, email, password, phone, address, dob };
+    try {
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+      router.push('/userinfo');
+    } catch (e) {
+      console.error('Failed to save user', e);
+      Alert.alert('Error', 'Không lưu được thông tin người dùng.');
+    }
   };
 
   return (
@@ -61,6 +72,14 @@ export default function Signup() {
         keyboardType="phone-pad"
         style={styles.input}
         placeholderTextColor="#666"
+      />
+      <TextInput
+        value={dob}
+        onChangeText={setDob}
+        placeholder="DATE OF BIRTH (YYYY-MM-DD)"
+        style={styles.input}
+        placeholderTextColor="#666"
+        autoCapitalize="none"
       />
       <TextInput
         value={address}

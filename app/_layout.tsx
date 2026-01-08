@@ -1,6 +1,11 @@
+import ChatIcon from '@/assets/svg/ChatIcon';
+import HomeIcon from '@/assets/svg/HomeIcon';
+import PlusIcon from '@/assets/svg/PlusIcon';
+import UserIcon from '@/assets/svg/UserIcon';
 import * as Sentry from '@sentry/react-native';
-import { Stack, useNavigationContainerRef } from 'expo-router';
+import { Slot, Stack, useNavigationContainerRef, useRouter, useSegments } from 'expo-router';
 import { useEffect } from 'react';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const navigationIntegration = Sentry.reactNavigationIntegration();
 
@@ -61,9 +66,76 @@ export default Sentry.wrap(function RootLayout() {
       });
       Sentry.setTag("group", "bhak");
     }, []);
+    const segments = useSegments();
+    const router = useRouter();
+
+    const active = (name: string) => {
+      const s = segments[0] || 'home';
+      return s === name;
+    };
+
+    const s = segments[0] || 'home';
+    const showNavbar = ['home', 'post-product', 'chat', 'userinfo'].includes(s);
 
     return (
-      <Stack>
-      </Stack>
+      <View style={{ flex: 1 }}>
+        <Stack>
+          <Slot />
+        </Stack>
+
+        {showNavbar ? (
+          <View style={styles.navbar}>
+          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/home')}>
+            <HomeIcon color={active('home') ? '#92E3A9' : '#666'} style={styles.navIcon} />
+            <Text style={[styles.navText, active('home') ? styles.activeNavText : null]}>Trang chủ</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/post-product')}>
+            <PlusIcon color={active('post-product') ? '#92E3A9' : '#666'} style={styles.navIcon} />
+            <Text style={[styles.navText, active('post-product') ? styles.activeNavText : null]}>Lên kệ</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/chat')}>
+            <ChatIcon color={active('chat') ? '#92E3A9' : '#666'} style={styles.navIcon} />
+            <Text style={[styles.navText, active('chat') ? styles.activeNavText : null]}>Chat</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/userinfo')}>
+            <UserIcon color={active('userinfo') ? '#92E3A9' : '#666'} style={styles.navIcon} />
+            <Text style={[styles.navText, active('userinfo') ? styles.activeNavText : null]}>Tài khoản</Text>
+          </TouchableOpacity>
+        </View>
+        ) : null}
+      </View>
     );
+});
+
+const styles = StyleSheet.create({
+  navbar: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 12,
+    height: Platform.OS === 'ios' ? 78 : 85,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+  },
+  navItem: {
+    alignItems: 'center',
+  },
+  navIcon: {
+    width: 24,
+    height: 24,
+    marginBottom: 4,
+  },
+  navText: {
+    fontSize: 14,
+    color: '#666',
+    fontFamily: 'Roboto',
+  },
+  activeNavText: {
+    color: '#92E3A9',
+  },
 });

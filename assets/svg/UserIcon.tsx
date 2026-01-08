@@ -1,6 +1,5 @@
-import * as React from "react";
 import Svg, { G, Path } from "react-native-svg";
-const UserIcon = (props) => (
+const UserIcon = ({ color = '#000000', ...props }) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     width="20pt"
@@ -11,7 +10,7 @@ const UserIcon = (props) => (
   >
     <G
       transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
-      fill="#000000"
+      fill={color}
       stroke="none"
     >
       <Path d="M2335 5106 c-274 -45 -508 -167 -697 -365 -190 -197 -305 -435 -338 -701 -57 -469 155 -926 550 -1184 180 -118 353 -178 563 -195 389 -30 722 93 989 365 262 266 379 596 347 971 -12 143 -38 248 -90 370 -75 178 -181 322 -329 450 -173 148 -341 233 -555 278 -106 23 -336 28 -440 11z" />

@@ -1,9 +1,5 @@
-import ChatIcon from '@/assets/svg/ChatIcon';
 import HeartIcon from '@/assets/svg/HeartIcon';
 import HeartedIcon from '@/assets/svg/HeartedIcon';
-import HomeIcon from '@/assets/svg/HomeIcon';
-import PlusIcon from '@/assets/svg/PlusIcon';
-import UserIcon from '@/assets/svg/UserIcon';
 import WalkIcon from '@/assets/svg/WalkIcon';
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -23,6 +19,17 @@ interface ProductItem {
 }
 
 const products: ProductItem[] = [
+  {
+    id: 0,
+    name: 'iPhone 17 Pro Max 1TB Likenew',
+    type: 'Điện tử',
+    usage: '99% ',
+    distance: 'Cách bạn 1km',
+    image: require('../assets/images/iphone.png'),
+    note: 'Like new, full box, pin còn 100',
+    price: '27.000.000đ',
+    address: 'Tân Bình'
+  },
   {
     id: 1,
     name: 'Chảo Sunhouse',
@@ -118,7 +125,13 @@ export default function Home() {
           headerShown: false,
         }}
       />
-      
+
+      <TouchableOpacity style={styles.topHeader} onPress={() => router.push('/home')}>
+        <Image
+          source={require('../assets/images/ecotrade-high-resolution-logo-transparent (2).png')}
+          style={styles.logoImage}
+        />
+      </TouchableOpacity>
 
       {/* Main title */}
       <Text style={styles.mainTitle}>Mới nhất gần bạn</Text>
@@ -130,7 +143,11 @@ export default function Home() {
       </View>
 
       {/* Main Image with overlay */}
-      <View style={styles.mainImageWrapper}>
+      <TouchableOpacity
+        style={styles.mainImageWrapper}
+        onPress={() => router.push('/product/0')}
+        activeOpacity={0.9}
+      >
         <Image
           source={require('../assets/images/iphone.png')}
           style={styles.mainImage}
@@ -140,7 +157,7 @@ export default function Home() {
           <Text style={styles.overlayTitle}>iPhone 17 Pro Max 1TB Likenew</Text>
           <Text style={styles.overlaySubtitle}>27.000.000đ - Tân Bình</Text>
         </View>
-      </View>
+      </TouchableOpacity>
       <Text style={styles.sectionTitle}>Sản phẩm mới nhất</Text>
 
       {/* Filter Options */}
@@ -193,28 +210,7 @@ export default function Home() {
         ))}
       </ScrollView>
 
-      {/* Navigation Bar */}
-      <View style={styles.navbar}>
-        <TouchableOpacity style={styles.navItem}>
-          <HomeIcon style={styles.navIcon}/>
-          <Text style={[styles.navText, styles.activeNavText]}>Trang chủ</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => router.push('/post-product')}
-        >
-          <PlusIcon style={styles.navIcon} />
-          <Text style={styles.navText}>Lên kệ</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/chat')}>
-          <ChatIcon style={styles.navIcon} />
-          <Text style={styles.navText}>Chat</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/userinfo')}>
-          <UserIcon style={styles.navIcon} />
-          <Text style={styles.navText}>Tài khoản</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Navigation handled by root layout */}
     </View>
   );
 }
@@ -222,7 +218,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
     paddingTop: Platform.OS === 'ios' ? 64 : 60,
   },
   header: {
@@ -396,9 +392,20 @@ const styles = StyleSheet.create({
   navText: {
     fontSize: 14,
     color: '#666',
-    fontFamily:'Bold',
+    fontFamily: 'Roboto',
   },
   activeNavText: {
     color: '#92E3A9',
+  },
+  topHeader: {
+    backgroundColor: '#92E3A9',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+  },
+  logoImage: {
+    width: 160,
+    height: 36,
+    resizeMode: 'contain',
   },
 });

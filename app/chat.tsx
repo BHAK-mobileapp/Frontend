@@ -10,6 +10,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  StatusBar,
 } from 'react-native';
 
 type Message = {
@@ -54,8 +55,11 @@ export default function Chat() {
     </View>
   );
 
+  const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 24) : 44;
+  const HEADER_HEIGHT = STATUS_BAR_HEIGHT;
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { paddingTop: HEADER_HEIGHT }]}>
       <Stack.Screen options={{ headerShown: true, title: 'Chat với người bán' }} />
 
       <KeyboardAvoidingView
@@ -90,7 +94,7 @@ export default function Chat() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: '#F5F5F5' },
   messagesContainer: { padding: 12, paddingBottom: 20 },
   messageRow: { flexDirection: 'row', marginBottom: 12, alignItems: 'flex-end' },
   messageRowLeft: { justifyContent: 'flex-start' },
@@ -131,7 +135,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   sendButton: {
-    backgroundColor: '#2b8a3e',
+    backgroundColor: '#92E3A9',
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 20,

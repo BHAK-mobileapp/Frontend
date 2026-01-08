@@ -1,6 +1,5 @@
-import * as React from "react";
 import Svg, { G, Path } from "react-native-svg";
-const ChatIcon = (props) => (
+const ChatIcon = ({ color = '#000000', ...props }) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     width="20pt"
@@ -11,7 +10,7 @@ const ChatIcon = (props) => (
   >
     <G
       transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
-      fill="#000000"
+      fill={color}
       stroke="none"
     >
       <Path d="M2990 5114 c-19 -2 -73 -9 -120 -15 -675 -82 -1290 -497 -1535 -1036 -37 -80 -89 -233 -101 -297 -6 -35 -5 -39 12 -34 366 108 639 146 949 135 561 -21 1069 -193 1484 -502 497 -371 794 -887 836 -1457 l7 -88 242 0 c279 0 294 4 334 80 26 52 28 90 6 132 -9 18 -97 125 -196 240 l-179 209 39 44 c145 165 272 426 324 668 31 146 31 408 0 554 -150 694 -768 1220 -1587 1348 -96 15 -442 28 -515 19z" />
